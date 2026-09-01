@@ -1,0 +1,856 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema de Sorteio</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="icon"
+          type="image/jpeg"
+          href="{{ url_for('static', filename='favicon_ete.png') }}">
+
+    <style>
+
+        body {
+            background-color: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+        }
+
+        .btn {
+            border-radius: 8px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+        }
+
+        .stats-card {
+            transition: 0.2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .sorteado {
+            background: linear-gradient(135deg, #198754, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .numero-sorteado {
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .table {
+            vertical-align: middle;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        /* =========================
+           MODAL DO CADASTRO
+        ========================= */
+
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .numero-participante {
+            font-size: 50px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        .info-participante {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+        }
+
+        .info-participante i {
+            color: #0d6efd;
+            margin-right: 8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- TÍTULO -->
+
+    <div class="d-flex align-items-center justify-content-center gap-3 mb-4"
+         style="margin-top: 20px;">
+
+        <img
+            src="{{ url_for('static', filename='ete.jpeg') }}"
+            alt="Logo da ETE"
+            style="height: 60px; width: auto;"
+        >
+
+        <div>
+
+            <h1 class="fw-bold mb-0">
+                ETE JOSÉ JOAQUIM DA SILVA FILHO
+            </h1>
+
+            <p class="text-muted mb-0">
+                Mostra de Empreendedorismo
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- CARDS DE INFORMAÇÃO -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card stats-card p-3">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="fs-1 text-primary me-3">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <small class="text-muted">
+                            Participantes cadastrados
+                        </small>
+
+                        <h3 class="mb-0">
+                            {{ usuarios|length }}
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card stats-card p-3">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="fs-1 text-success me-3">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <small class="text-muted">
+                            Prontos para o sorteio
+                        </small>
+
+                        <h3 class="mb-0">
+                            {{ aptos_sorteio }}
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card stats-card p-3">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="fs-1 text-warning me-3">
+                        <i class="bi bi-shuffle"></i>
+                    </div>
+
+                    <div>
+
+                        <small class="text-muted">
+                            Status
+                        </small>
+
+                        {% if aptos_sorteio > 0 %}
+
+                            <h5 class="text-success mb-0">
+                                Sorteio disponível
+                            </h5>
+
+                        {% else %}
+
+                            <h5 class="text-danger mb-0">
+                                Sem participantes
+                            </h5>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- CADASTRO -->
+
+        <div class="col-lg-5">
+
+            <div class="card">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-person-plus-fill"></i>
+
+                        Cadastrar Participante
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        <input
+                            type="hidden"
+                            name="acao"
+                            value="cadastrar"
+                        >
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Nome completo
+                            </label>
+
+                            <input
+                                type="text"
+                                name="nome"
+                                class="form-control"
+                                placeholder="Digite o nome"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Telefone
+                            </label>
+
+                            <input
+                                type="text"
+                                name="telefone"
+                                class="form-control"
+                                placeholder="(00) 00000-0000"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Instituição
+                            </label>
+
+                            <input
+                                type="text"
+                                name="instituicao"
+                                class="form-control"
+                                placeholder="Nome da instituição"
+                                required
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+
+                            <i class="bi bi-person-plus"></i>
+
+                            Cadastrar participante
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- VALIDAÇÃO -->
+
+            <div class="card mt-4">
+
+                <div class="card-header bg-warning">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-person-check-fill"></i>
+
+                        Validar Participante
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        <input
+                            type="hidden"
+                            name="acao"
+                            value="validar"
+                        >
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Número do participante
+                            </label>
+
+                            <input
+                                type="number"
+                                name="validar"
+                                class="form-control"
+                                placeholder="Digite o número"
+                                required
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-warning w-100"
+                        >
+
+                            <i class="bi bi-check-circle"></i>
+
+                            Validar
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SORTEIO -->
+
+        <div class="col-lg-7">
+
+            <div class="card">
+
+                <div class="card-header bg-success text-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-shuffle"></i>
+
+                        Realizar Sorteio
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body text-center">
+
+                    <p class="text-muted">
+
+                        Participantes aptos:
+
+                        <strong>
+                            {{ aptos_sorteio }}
+                        </strong>
+
+                    </p>
+
+
+                    <form method="POST">
+
+                        <input
+                            type="hidden"
+                            name="acao"
+                            value="sorteio"
+                        >
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-success btn-lg px-5"
+                            {% if aptos_sorteio == 0 %}
+                                disabled
+                            {% endif %}
+                        >
+
+                            <i class="bi bi-dice-5-fill"></i>
+
+                            SORTEAR PARTICIPANTE
+
+                        </button>
+
+                    </form>
+
+
+                    {% if sorteado %}
+
+                    <div class="sorteado mt-4">
+
+                        <h4>
+                            Participante sorteado!
+                        </h4>
+
+                        <hr>
+
+                        <div class="numero-sorteado">
+                            Nº {{ sorteado[0] }}
+                        </div>
+
+                        <h2 class="fw-bold">
+                            {{ sorteado[1] }}
+                        </h2>
+
+                        <p class="mb-0">
+                            Parabéns! Você foi o participante sorteado.
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONSULTA -->
+
+    <div class="card mt-4">
+
+        <div class="card-header bg-dark text-white">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-search"></i>
+
+                Consultar Participantes
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <form method="GET" class="row g-2 mb-4">
+
+                <div class="col-md-10">
+
+                    <input
+                        type="text"
+                        name="busca"
+                        class="form-control"
+                        placeholder="Pesquisar participante pelo nome..."
+                        value="{{ request.args.get('busca', '') }}"
+                    >
+
+                </div>
+
+
+                <div class="col-md-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark w-100"
+                    >
+
+                        <i class="bi bi-search"></i>
+
+                        Pesquisar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <!-- TABELA -->
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>Nº</th>
+
+                            <th>Nome</th>
+
+                            <th>Telefone</th>
+
+                            <th>Instituição</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for usuario in usuarios %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ usuario[0] }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+                                {{ usuario[1] }}
+                            </td>
+
+
+                            <td>
+                                {{ usuario[2] }}
+                            </td>
+
+
+                            <td>
+                                {{ usuario[3] }}
+                            </td>
+
+
+                            <td>
+
+                                {% if usuario[4] == 1 %}
+
+                                    <span class="badge bg-success">
+
+                                        <i class="bi bi-check-circle"></i>
+
+                                        Validado
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+
+                                        <i class="bi bi-clock"></i>
+
+                                        Pendente
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="text-center text-muted py-4"
+                            >
+
+                                <i class="bi bi-person-x fs-2"></i>
+
+                                <p class="mb-0 mt-2">
+                                    Nenhum participante encontrado.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- MODAL ÚNICO DO CADASTRO -->
+<!-- ================================================= -->
+
+{% if cadastrado %}
+
+<div
+    class="modal fade"
+    id="modalCadastro"
+    tabindex="-1"
+    aria-labelledby="modalCadastroLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- CABEÇALHO -->
+
+            <div class="modal-header bg-primary text-white">
+
+                <h5
+                    class="modal-title"
+                    id="modalCadastroLabel"
+                >
+
+                    <i class="bi bi-person-check-fill"></i>
+
+                    Participante cadastrado
+
+                </h5>
+
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Fechar"
+                ></button>
+
+            </div>
+
+
+            <!-- INFORMAÇÕES -->
+
+            <div class="modal-body text-center">
+
+                <p class="text-muted mb-1">
+                    Número do participante
+                </p>
+
+
+                <div class="numero-participante mb-4">
+
+                    Nº {{ cadastrado[0] }}
+
+                </div>
+
+
+                <div class="info-participante text-start">
+
+                    <i class="bi bi-person-fill"></i>
+
+                    <strong>
+                        Nome:
+                    </strong>
+
+                    {{ cadastrado[1] }}
+
+                </div>
+
+
+                <div class="info-participante text-start">
+
+                    <i class="bi bi-telephone-fill"></i>
+
+                    <strong>
+                        Telefone:
+                    </strong>
+
+                    {{ cadastrado[2] }}
+
+                </div>
+
+
+                <div class="info-participante text-start">
+
+                    <i class="bi bi-building-fill"></i>
+
+                    <strong>
+                        Instituição:
+                    </strong>
+
+                    {{ cadastrado[3] }}
+
+                </div>
+
+
+                <p class="text-success fw-bold mt-4 mb-0">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    Cadastro realizado com sucesso!
+
+                </p>
+
+            </div>
+
+
+            <!-- BOTÃO -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-primary w-100"
+                    data-bs-dismiss="modal"
+                >
+
+                    <i class="bi bi-check-lg"></i>
+
+                    Confirmar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- RODAPÉ -->
+
+<footer>
+
+    <p class="mb-0">
+        Sistema de Sorteio - ETE José Joaquim da Silva Filho © 2026
+    </p>
+
+</footer>
+
+
+<!-- Bootstrap JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!-- ABRIR MODAL AUTOMATICAMENTE -->
+
+{% if cadastrado %}
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const modalElement =
+            document.getElementById("modalCadastro");
+
+        if (modalElement) {
+
+            const modal =
+                new bootstrap.Modal(modalElement);
+
+            modal.show();
+
+        }
+
+    });
+
+</script>
+
+{% endif %}
+
+
+</body>
+
+</html>
