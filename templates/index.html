@@ -1,19 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Sistema de Sorteio</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -77,10 +73,6 @@
             color: #6c757d;
         }
 
-        /* =========================
-           MODAIS
-        ========================= */
-
         .modal-content {
             border: none;
             border-radius: 15px;
@@ -91,6 +83,12 @@
             font-size: 50px;
             font-weight: bold;
             color: #0d6efd;
+        }
+
+        .numero-sorteado-modal {
+            font-size: 55px;
+            font-weight: bold;
+            color: #198754;
         }
 
         .info-participante {
@@ -105,16 +103,25 @@
             margin-right: 8px;
         }
 
+        .info-sorteado {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+        }
+
+        .info-sorteado i {
+            color: #198754;
+            margin-right: 8px;
+        }
+
     </style>
 
 </head>
 
-
 <body>
 
 <div class="container">
-
-    <!-- TÍTULO -->
 
     <div class="d-flex align-items-center justify-content-center gap-3 mb-4"
          style="margin-top: 20px;">
@@ -138,9 +145,6 @@
         </div>
 
     </div>
-
-
-    <!-- CARDS DE INFORMAÇÃO -->
 
     <div class="row g-3 mb-4">
 
@@ -172,7 +176,6 @@
 
         </div>
 
-
         <div class="col-md-4">
 
             <div class="card stats-card p-3">
@@ -200,7 +203,6 @@
             </div>
 
         </div>
-
 
         <div class="col-md-4">
 
@@ -242,10 +244,7 @@
 
     </div>
 
-
     <div class="row g-4">
-
-        <!-- CADASTRO -->
 
         <div class="col-lg-5">
 
@@ -263,7 +262,6 @@
 
                 </div>
 
-
                 <div class="card-body">
 
                     <form method="POST">
@@ -273,7 +271,6 @@
                             name="acao"
                             value="cadastrar"
                         >
-
 
                         <div class="mb-3">
 
@@ -291,7 +288,6 @@
 
                         </div>
 
-
                         <div class="mb-3">
 
                             <label class="form-label">
@@ -308,7 +304,6 @@
 
                         </div>
 
-
                         <div class="mb-3">
 
                             <label class="form-label">
@@ -324,7 +319,6 @@
                             >
 
                         </div>
-
 
                         <button
                             type="submit"
@@ -343,9 +337,6 @@
 
             </div>
 
-
-            <!-- VALIDAÇÃO -->
-
             <div class="card mt-4">
 
                 <div class="card-header bg-warning">
@@ -360,7 +351,6 @@
 
                 </div>
 
-
                 <div class="card-body">
 
                     <form method="POST">
@@ -370,7 +360,6 @@
                             name="acao"
                             value="validar"
                         >
-
 
                         <div class="mb-3">
 
@@ -387,7 +376,6 @@
                             >
 
                         </div>
-
 
                         <button
                             type="submit"
@@ -408,9 +396,6 @@
 
         </div>
 
-
-        <!-- SORTEIO -->
-
         <div class="col-lg-7">
 
             <div class="card">
@@ -427,7 +412,6 @@
 
                 </div>
 
-
                 <div class="card-body text-center">
 
                     <p class="text-muted">
@@ -440,7 +424,6 @@
 
                     </p>
 
-
                     <form method="POST">
 
                         <input
@@ -448,7 +431,6 @@
                             name="acao"
                             value="sorteio"
                         >
-
 
                         <button
                             type="submit"
@@ -465,7 +447,6 @@
                         </button>
 
                     </form>
-
 
                     {% if sorteado %}
 
@@ -501,9 +482,6 @@
 
     </div>
 
-
-    <!-- CONSULTA -->
-
     <div class="card mt-4">
 
         <div class="card-header bg-dark text-white">
@@ -517,7 +495,6 @@
             </h5>
 
         </div>
-
 
         <div class="card-body">
 
@@ -535,7 +512,6 @@
 
                 </div>
 
-
                 <div class="col-md-2">
 
                     <button
@@ -552,9 +528,6 @@
                 </div>
 
             </form>
-
-
-            <!-- TABELA -->
 
             <div class="table-responsive">
 
@@ -574,10 +547,13 @@
 
                             <th>Status</th>
 
+                            <th class="text-center">
+                                Ações
+                            </th>
+
                         </tr>
 
                     </thead>
-
 
                     <tbody>
 
@@ -593,21 +569,17 @@
 
                             </td>
 
-
                             <td>
                                 {{ usuario[1] }}
                             </td>
-
 
                             <td>
                                 {{ usuario[2] }}
                             </td>
 
-
                             <td>
                                 {{ usuario[3] }}
                             </td>
-
 
                             <td>
 
@@ -635,15 +607,49 @@
 
                             </td>
 
-                        </tr>
+                            <td class="text-center">
 
+                                <form
+                                    method="POST"
+                                    class="d-inline"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="acao"
+                                        value="inativar"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="numero"
+                                        value="{{ usuario[0] }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-danger"
+                                        title="Excluir participante"
+                                    >
+
+                                        <i class="bi bi-trash-fill"></i>
+
+                                        Excluir
+
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
 
                         {% else %}
 
                         <tr>
 
                             <td
-                                colspan="5"
+                                colspan="6"
                                 class="text-center text-muted py-4"
                             >
 
@@ -671,11 +677,6 @@
 
 </div>
 
-
-<!-- ================================================= -->
-<!-- MODAL DO CADASTRO -->
-<!-- ================================================= -->
-
 {% if cadastrado %}
 
 <div
@@ -690,8 +691,6 @@
 
         <div class="modal-content">
 
-            <!-- CABEÇALHO -->
-
             <div class="modal-header bg-primary text-white">
 
                 <h5
@@ -705,7 +704,6 @@
 
                 </h5>
 
-
                 <button
                     type="button"
                     class="btn-close btn-close-white"
@@ -715,22 +713,15 @@
 
             </div>
 
-
-            <!-- INFORMAÇÕES -->
-
             <div class="modal-body text-center">
 
                 <p class="text-muted mb-1">
                     Número do participante
                 </p>
 
-
                 <div class="numero-participante mb-4">
-
                     Nº {{ cadastrado[0] }}
-
                 </div>
-
 
                 <div class="info-participante text-start">
 
@@ -744,7 +735,6 @@
 
                 </div>
 
-
                 <div class="info-participante text-start">
 
                     <i class="bi bi-telephone-fill"></i>
@@ -756,7 +746,6 @@
                     {{ cadastrado[2] }}
 
                 </div>
-
 
                 <div class="info-participante text-start">
 
@@ -770,7 +759,6 @@
 
                 </div>
 
-
                 <p class="text-success fw-bold mt-4 mb-0">
 
                     <i class="bi bi-check-circle-fill"></i>
@@ -780,9 +768,6 @@
                 </p>
 
             </div>
-
-
-            <!-- BOTÃO -->
 
             <div class="modal-footer">
 
@@ -808,11 +793,6 @@
 
 {% endif %}
 
-
-<!-- ================================================= -->
-<!-- MODAL DO SORTEIO -->
-<!-- ================================================= -->
-
 {% if sorteado %}
 
 <div
@@ -827,8 +807,6 @@
 
         <div class="modal-content">
 
-            <!-- CABEÇALHO -->
-
             <div class="modal-header bg-success text-white">
 
                 <h5
@@ -842,7 +820,6 @@
 
                 </h5>
 
-
                 <button
                     type="button"
                     class="btn-close btn-close-white"
@@ -852,27 +829,17 @@
 
             </div>
 
-
-            <!-- INFORMAÇÕES -->
-
             <div class="modal-body text-center">
 
                 <p class="text-muted mb-1">
-                    Número do participante
+                    Número sorteado
                 </p>
 
-
-                <div
-                    class="numero-participante mb-4"
-                    style="color: #198754;"
-                >
-
+                <div class="numero-sorteado-modal mb-4">
                     Nº {{ sorteado[0] }}
-
                 </div>
 
-
-                <div class="info-participante text-start">
+                <div class="info-sorteado text-start">
 
                     <i class="bi bi-person-fill"></i>
 
@@ -884,8 +851,7 @@
 
                 </div>
 
-
-                <div class="info-participante text-start">
+                <div class="info-sorteado text-start">
 
                     <i class="bi bi-telephone-fill"></i>
 
@@ -897,8 +863,7 @@
 
                 </div>
 
-
-                <div class="info-participante text-start">
+                <div class="info-sorteado text-start">
 
                     <i class="bi bi-building-fill"></i>
 
@@ -910,19 +875,15 @@
 
                 </div>
 
-
                 <p class="text-success fw-bold mt-4 mb-0">
 
                     <i class="bi bi-trophy-fill"></i>
 
-                    Parabéns ao participante sorteado!
+                    Parabéns! Participante vencedor.
 
                 </p>
 
             </div>
-
-
-            <!-- BOTÃO -->
 
             <div class="modal-footer">
 
@@ -948,9 +909,6 @@
 
 {% endif %}
 
-
-<!-- RODAPÉ -->
-
 <footer>
 
     <p class="mb-0">
@@ -959,70 +917,52 @@
 
 </footer>
 
-
-<!-- Bootstrap JS -->
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 </script>
-
-
-<!-- ================================================= -->
-<!-- ABRIR MODAL DO CADASTRO AUTOMATICAMENTE -->
-<!-- ================================================= -->
 
 {% if cadastrado %}
 
 <script>
 
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        const modalElement =
-            document.getElementById("modalCadastro");
+    const modalElement = document.getElementById("modalCadastro");
 
-        if (modalElement) {
+    if (modalElement) {
 
-            const modal =
-                new bootstrap.Modal(modalElement);
+        const modal = new bootstrap.Modal(modalElement);
 
-            modal.show();
+        modal.show();
 
-        }
+    }
 
-    });
+});
 
 </script>
 
 {% endif %}
-
-
-<!-- ================================================= -->
-<!-- ABRIR MODAL DO SORTEIO AUTOMATICAMENTE -->
-<!-- ================================================= -->
 
 {% if sorteado %}
 
 <script>
 
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        const modalElement =
-            document.getElementById("modalSorteio");
+    const modalElement = document.getElementById("modalSorteio");
 
-        if (modalElement) {
+    if (modalElement) {
 
-            const modal =
-                new bootstrap.Modal(modalElement);
+        const modal = new bootstrap.Modal(modalElement);
 
-            modal.show();
+        modal.show();
 
-        }
+    }
 
-    });
+});
 
 </script>
 
 {% endif %}
-
 
 </body>
 

@@ -46,6 +46,14 @@ def homePage():
                 cur.execute("Update aluno Set sorteado = 1 Where num = ?", (sorteado[0],))
                 conn.commit()
 
+        elif acao == "inativar":
+            numero = request.form["numero"]
+
+            cur.execute("Delete from aluno where num = ?", (numero,))
+            conn.commit()
+
+            return redirect("/")
+
     aptos_sorteio = cur.execute("Select Count(*) From aluno Where validado = 1 and sorteado = 0").fetchone()[0] or 0
     
     #Filtro
